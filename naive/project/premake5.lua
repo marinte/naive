@@ -10,7 +10,8 @@ project "naive"
   kind "ConsoleApp"
   language "C++"
   cppdialect "C++17"
-
+ 
+  debugdir "../data"
   location "%{wks.location}/projects"
 
   targetdir "../bin/"
@@ -19,20 +20,22 @@ project "naive"
   includedirs{
     "../include",
     "../src",
-    "../vendor/spdlog/include"
-
+    "../vendor/spdlog/include",
+    "../vendor"
   }
 
   files { 
     "../include/**.h",
-    "../src/**.cpp"
+    "../src/**.cpp",
+    "../vendor/minitrace/minitrace.h",
+    "../vendor/minitrace/minitrace.c"
   }
 
   filter "system:windows"
     systemversion "latest"
     
   filter "configurations:Debug"
-    defines { "NV_DEBUG" }
+    defines { "NV_DEBUG", "MTR_ENABLED" }
     symbols "on"
     
   filter "configurations:Release"

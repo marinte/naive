@@ -3,10 +3,13 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/async.h"
 
-
 namespace naive {
 
   void Log::init() {
+
+    mtr_init("trace.json");
+    MTR_META_PROCESS_NAME("minitrace_test");
+    MTR_META_THREAD_NAME("main thread");
 
     std::shared_ptr<spdlog::logger> naive_logger;
 
@@ -17,6 +20,11 @@ namespace naive {
 
     spdlog::set_default_logger(naive_logger);
 
+  }
+
+  void Log::shutdown() { 
+    mtr_flush(); 
+    mtr_shutdown();
   }
 
 }
