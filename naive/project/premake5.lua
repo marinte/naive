@@ -18,7 +18,9 @@ project "naive"
 
   includedirs{
     "../include",
-    "../src"
+    "../src",
+    "../vendor/spdlog/include"
+
   }
 
   files { 
