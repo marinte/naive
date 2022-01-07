@@ -4,3 +4,6 @@
 [submodule "naive/vendor/minitrace"]
 	path = naive/vendor/minitrace
 	url = https://github.com/hrydgard/minitrace
+[submodule "naive/vendor/glfw"]
+	path = naive/vendor/glfw
+	url = https://github.com/marinte/glfw

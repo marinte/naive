@@ -1,48 +1,70 @@
+#include "core/window.h"
+#include "core/application.h"
+
 #include "core/log.h"
 
-#include <filesystem>
-#include <iostream>
+
+namespace naive {
+
+  bool Application::application_should_close_ = false;
+
+  Application::Application() {}
+
+  Application::Application(const Application&) {}
+
+  Application::~Application() {}
+
+  void Application::init() {
+    NAIVE_TRACE("NV", "Init");
+  }
+
+  void Application::update() {
+    NAIVE_TRACE("NV", "Update");
+  }
+
+  void Application::shutdown() {
+    NAIVE_TRACE("NV", "Shut Down");
+  }
+
+  void Application::run() {
+
+    naive::Log::init();
+    init();
+
+    WindowInfo info;
+    info.width_ = 1920;
+    info.width_ = 1080;
+    info.title_ = "Naive Engine";
+    info.vsync_enabled_ = true;
+    std::unique_ptr<Window> window = std::unique_ptr<Window>(Window::create(info));
+
+    while (!application_should_close_) {
+
+      //int width, height;
+      //glfwGetFramebufferSize(window, &width, &height);
 
 
-void test() {
+      //double time = glfwGetTime();
 
-  MTR_SCOPE("NV", "Application");
-  const int a = 500;
-  std::vector<double> test_vector;
-  test_vector.reserve(a * a);
-  for (int i = 0; i < a; ++i) {
-    for (int j = 0; j < a; ++j) {
+      update();
+      window->onUpdate();
 
-      double b = sqrt(i) * sqrt(j);
-      test_vector.emplace_back(b);
     }
 
-  }
 
-  for (size_t i = 0; i < test_vector.size(); ++i) {
-    test_vector[i] = sqrt(test_vector[i]);
-  }
+    shutdown();
+    naive::Log::shutdown();
 
-  test_vector.clear();
+  }
 
 }
 
+
+//TODO: this will be in entry point class in a future.
 int main(int argc, char** argv) {
 
-  naive::Log::init();
-
-
-  std::cout << std::filesystem::current_path() << std::endl;
-  test();
-
-  NAIVE_DEBUG("This is a DEBUG test {0}", 10);
-  NAIVE_INFO("This is a INFO test {0}", 10);
-  NAIVE_WARN("This is a WARN test {0}", 10);
-  NAIVE_ERROR("This is a ERROR test {0}", 10);
-  NAIVE_FATAL("This is a CRITICAL test {0}", 10);
-
-  naive::Log::shutdown();
+  naive::Application app;
+  app.run();
 
   return 0;
-
 }
