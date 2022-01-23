@@ -3,10 +3,9 @@
 
 #include "core/log.h"
 
+#include <functional>
 
 namespace naive {
-
-  bool Application::application_should_close_ = false;
 
   Application::Application() {}
 
@@ -15,11 +14,35 @@ namespace naive {
   Application::~Application() {}
 
   void Application::init() {
+
     NAIVE_TRACE("NV", "Init");
+    WindowInfo info;
+    info.width_ = 1920;
+    info.width_ = 1080;
+    info.title_ = "Naive Engine";
+    info.vsync_enabled_ = true;
+
+    window_ = std::unique_ptr<Window>(Window::create(info));
+    window_->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
+
+    EventSystem::BindEvent<WindowClosedEvent>(std::bind(&Application::onWindowClosed, this, std::placeholders::_1));
+
   }
 
   void Application::update() {
     NAIVE_TRACE("NV", "Update");
+  }
+
+  void Application::onEvent(Event incoming_event) {
+
+    EventSystem::DispachEvent(incoming_event);
+
+  }
+
+  void Application::onWindowClosed(const WindowClosedEvent& incoming_event) {
+
+    application_should_close_ = true;
+
   }
 
   void Application::shutdown() {
@@ -31,12 +54,6 @@ namespace naive {
     naive::Log::init();
     init();
 
-    WindowInfo info;
-    info.width_ = 1920;
-    info.width_ = 1080;
-    info.title_ = "Naive Engine";
-    info.vsync_enabled_ = true;
-    std::unique_ptr<Window> window = std::unique_ptr<Window>(Window::create(info));
 
     while (!application_should_close_) {
 
@@ -47,7 +64,7 @@ namespace naive {
       //double time = glfwGetTime();
 
       update();
-      window->onUpdate();
+      window_->onUpdate();
 
     }
 

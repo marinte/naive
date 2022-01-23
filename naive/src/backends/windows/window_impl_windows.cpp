@@ -2,24 +2,30 @@
 #include "backends/windows/window_impl_windows.h"
 #include "core/application.h"
 
+#include "core/events/mouse_event.h"
+#include "core/events/keyboard_evet.h"
+#include "core/events/application_event.h"
+
+// Game Engine Architecture 3rd Edition - Page 1137
+
+//#define HANDLE_EVENT(incoming_event)                                                  
+#define HANDLE_EVENT(incoming_event)                                                  \
+       WindowInfo& info = *static_cast<WindowInfo*>(glfwGetWindowUserPointer(window));  \
+       info.event_callback_(std::move(incoming_event))
+
 namespace naive {
 
-  namespace Internal {
-
-    void error_callback(int error, const char* description)
-    {
-      NAIVE_ERROR("ErrorCode: {0}: {1}", error, description);
-    }
-
-    void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-    {
-      if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        naive::Application::application_should_close_ = true;
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-      }
-    }
-
-  }
+  //   namespace Internal {
+  // 
+  //     void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+  //     {
+  //       if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+  //         naive::Application::application_should_close_ = true;
+  //         //glfwSetWindowShouldClose(window, GLFW_TRUE);
+  //       }
+  //     }
+  // 
+  //   }
 
   uint8_t Window_ImplWindows::s_instantiated_windows_count_ = 0;
 
@@ -52,8 +58,98 @@ namespace naive {
 
     glfwMakeContextCurrent(window_instance_);
 
-    glfwSetErrorCallback(Internal::error_callback);
-    glfwSetKeyCallback(window_instance_, Internal::key_callback);
+    glfwSetWindowUserPointer(window_instance_, &info_);
+
+    //Setup GLFW callbacks.
+
+    // Error
+    glfwSetErrorCallback([](int error, const char* description) {
+
+      NAIVE_ERROR("ErrorCode: {0}: {1}", error, description);
+
+    });
+
+    // Mouse
+    glfwSetCursorPosCallback(window_instance_, [](GLFWwindow* window, double xpos, double ypos) {
+
+      MouseMovedEvent mouse_moved_event;
+      mouse_moved_event.x_position = xpos;
+      mouse_moved_event.y_position = ypos;
+
+      HANDLE_EVENT(mouse_moved_event);
+
+    });
+
+    glfwSetMouseButtonCallback(window_instance_, [](GLFWwindow* window, int button, int action, int mods) {
+
+      if (action == GLFW_PRESS) {
+
+        MouseButtonDownEvent mouse_button_down_event;
+        mouse_button_down_event.button = button;
+
+        HANDLE_EVENT(mouse_button_down_event);
+
+      }
+      else if (action == GLFW_RELEASE) {
+
+        MouseButtonUpEvent mouse_button_up_event;
+        mouse_button_up_event.button = button;
+
+        HANDLE_EVENT(mouse_button_up_event);
+      }
+
+
+    });
+
+    glfwSetScrollCallback(window_instance_, [](GLFWwindow* window, double xoffset, double yoffset) {
+
+      MouseScrolledEvent mouse_scrolled_event;
+      mouse_scrolled_event.x_offset = xoffset;
+      mouse_scrolled_event.y_offset = yoffset;
+
+      HANDLE_EVENT(mouse_scrolled_event);
+
+    });
+
+    // Keyboard
+    glfwSetKeyCallback(window_instance_, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+
+      if (action == GLFW_PRESS) {
+
+        KeyDownEvent key_down_event;
+        key_down_event.key = key;
+
+        HANDLE_EVENT(key_down_event);
+
+
+
+      }
+      else if (action == GLFW_REPEAT) {
+
+        KeyPressedEvent key_pressed_event;
+        key_pressed_event.key = key;
+
+        HANDLE_EVENT(key_pressed_event);
+
+      }
+      else if (action == GLFW_RELEASE) {
+
+        KeyUpEvent key_up_event;
+        key_up_event.key = key;
+
+        HANDLE_EVENT(key_up_event);
+
+      }
+
+    });
+
+    // Application
+    glfwSetWindowCloseCallback(window_instance_, [](GLFWwindow* window) {
+
+      WindowClosedEvent window_closed_event;
+      HANDLE_EVENT(window_closed_event);
+
+    });
 
   }
 
@@ -77,11 +173,19 @@ namespace naive {
 
   }
 
+  void Window_ImplWindows::setEventCallback(std::function<void(Event)> event_callback) {
+
+    info_.event_callback_ = event_callback;
+
+  }
+
   void Window_ImplWindows::onUpdate() {
 
     glfwSwapBuffers(window_instance_);
     glfwPollEvents();
 
   }
+
+#undef HANDLE_EVENT
 
 }

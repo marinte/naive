@@ -21,6 +21,7 @@ namespace naive {
     const inline virtual bool& hasVsyncEnabled() const override { return info_.vsync_enabled_; }
 
     virtual void setVsyncEnabled(const bool& vsync) override;
+    virtual void setEventCallback(std::function<void(Event)> event_callback) override;
 
   private:
 
