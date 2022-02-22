@@ -4,6 +4,8 @@
 #include "core/log.h"
 
 #include <functional>
+#include <glad/glad.h>
+
 
 namespace naive {
 
@@ -55,8 +57,10 @@ namespace naive {
     init();
 
 
+    glClearColor(0.35f, 0.95f, 0.9f, 1.0f);
     while (!application_should_close_) {
 
+      glClear(GL_COLOR_BUFFER_BIT);
       //int width, height;
       //glfwGetFramebufferSize(window, &width, &height);
 

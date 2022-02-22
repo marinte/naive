@@ -6,6 +6,9 @@
 #include "core/events/keyboard_evet.h"
 #include "core/events/application_event.h"
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 // Game Engine Architecture 3rd Edition - Page 1137
 
 //#define HANDLE_EVENT(incoming_event)                                                  
@@ -57,6 +60,8 @@ namespace naive {
       info_.height_, info_.title_.c_str(), NULL, NULL);
 
     glfwMakeContextCurrent(window_instance_);
+    int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+    NAIVE_ASSERT(status, "Failed to initialize GLAD");
 
     glfwSetWindowUserPointer(window_instance_, &info_);
 

@@ -2,7 +2,8 @@
 #define __NV_WINDOWS_WINDOW_H__ 1
 
 #include "core/window.h"
-#include <GLFW/glfw3.h>
+
+struct GLFWwindow;
 
 namespace naive {
 

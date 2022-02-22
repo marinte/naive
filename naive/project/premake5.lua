@@ -9,6 +9,7 @@ workspace "naive"
 
 group "Dependencies"
   include "../vendor/glfw"
+  include "../vendor/glad"
 group""
 
 project "naive"
@@ -27,7 +28,8 @@ project "naive"
     "../src",
     "../vendor/spdlog/include",
     "../vendor",
-    "../vendor/GLFW/include"
+    "../vendor/glfw/include",
+    "../vendor/glad/include"
   }
 
   files { 
@@ -44,7 +46,8 @@ project "naive"
 	}
 
   links {
-    "GLFW"
+    "GLFW",
+    "Glad"
   }
 
   filter "system:windows"
