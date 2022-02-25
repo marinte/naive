@@ -21,6 +21,8 @@ namespace naive {
     const inline virtual std::string& title() const override { return info_.title_; }
     const inline virtual bool& hasVsyncEnabled() const override { return info_.vsync_enabled_; }
 
+    virtual void* getNativeWindow() override;
+
     virtual void setVsyncEnabled(const bool& vsync) override;
     virtual void setEventCallback(std::function<void(Event)> event_callback) override;
 

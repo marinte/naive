@@ -7,3 +7,9 @@
 [submodule "naive/vendor/glfw"]
 	path = naive/vendor/glfw
 	url = https://github.com/marinte/glfw
+[submodule "naive/vendor/imgui"]
+	path = naive/vendor/imgui
+	url = https://github.com/marinte/imgui
+[submodule "naive/vendor/glm"]
+	path = naive/vendor/glm
+	url = https://github.com/g-truc/glm

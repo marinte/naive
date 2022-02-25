@@ -10,6 +10,7 @@ workspace "naive"
 group "Dependencies"
   include "../vendor/glfw"
   include "../vendor/glad"
+  include "../vendor/imgui"
 group""
 
 project "naive"
@@ -29,7 +30,9 @@ project "naive"
     "../vendor/spdlog/include",
     "../vendor",
     "../vendor/glfw/include",
-    "../vendor/glad/include"
+    "../vendor/glad/include",
+    "../vendor/imgui",
+    "../vendor/glm"
   }
 
   files { 
@@ -37,7 +40,9 @@ project "naive"
     "../src/**.h",
     "../src/**.cpp",
     "../vendor/minitrace/minitrace.h",
-    "../vendor/minitrace/minitrace.c"
+    "../vendor/minitrace/minitrace.c",
+    "../vendor/glm/**.hpp",
+    "../vendor/glm/**.inl"
   }
 
   defines {
@@ -47,7 +52,8 @@ project "naive"
 
   links {
     "GLFW",
-    "Glad"
+    "Glad",
+    "ImGui"
   }
 
   filter "system:windows"

@@ -71,8 +71,6 @@ namespace naive {
 
     static void DispachEvent(const Event& incoming_event) {
 
-      NAIVE_DEBUG("{0}", incoming_event.getType());
-
       naive::Event::Type id = incoming_event.getType();
 
       for (int i = 0; i < event_callbacks[id].size(); ++i) {

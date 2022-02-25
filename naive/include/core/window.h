@@ -46,8 +46,9 @@ namespace naive {
     const virtual std::string& title() const = 0;
     const virtual bool& hasVsyncEnabled() const = 0;
 
-    virtual void setVsyncEnabled(const bool& vsync) = 0;
+    virtual void* getNativeWindow() = 0;
 
+    virtual void setVsyncEnabled(const bool& vsync) = 0;
     virtual void setEventCallback(std::function<void(Event)> event_callback) = 0;
 
     static Window* create(const WindowInfo& window_info = WindowInfo());

@@ -3,6 +3,7 @@
 
 #include "core/event_system.h"
 #include "core/events/application_event.h"
+#include "core/window.h"
 
 namespace naive {
 
@@ -17,6 +18,9 @@ namespace naive {
 
     void run();
 
+    static Application& get() { return *s_instance_; }
+    Window& getWindow() { return *window_; }
+
   private:
 
     void init();
@@ -25,6 +29,8 @@ namespace naive {
     void onEvent(Event incoming_event);
 
     void onWindowClosed(const WindowClosedEvent& incoming_event);
+
+    static Application* s_instance_;
 
     std::unique_ptr<Window> window_;
     bool application_should_close_ = false;

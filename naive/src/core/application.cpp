@@ -1,15 +1,21 @@
-#include "core/window.h"
 #include "core/application.h"
 
 #include "core/log.h"
 
 #include <functional>
 #include <glad/glad.h>
-
+#include <imgui/imgui_demo.cpp>
 
 namespace naive {
 
-  Application::Application() {}
+  Application* Application::s_instance_ = nullptr;
+
+  Application::Application() {
+  
+    NAIVE_ASSERT(!s_instance_, "An application has already been created.");
+    s_instance_ = this;
+
+  }
 
   Application::Application(const Application&) {}
 
@@ -56,11 +62,11 @@ namespace naive {
     naive::Log::init();
     init();
 
-
     glClearColor(0.35f, 0.95f, 0.9f, 1.0f);
     while (!application_should_close_) {
 
       glClear(GL_COLOR_BUFFER_BIT);
+
       //int width, height;
       //glfwGetFramebufferSize(window, &width, &height);
 

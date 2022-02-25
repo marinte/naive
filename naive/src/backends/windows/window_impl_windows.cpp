@@ -9,26 +9,18 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <Imgui/imgui.h>
+#include <backends/windows/imgui_impl_glfw.h>
+#include <backends/opengl/imgui_impl_opengl3.h>
+
 // Game Engine Architecture 3rd Edition - Page 1137
 
 //#define HANDLE_EVENT(incoming_event)                                                  
-#define HANDLE_EVENT(incoming_event)                                                  \
+#define HANDLE_EVENT(incoming_event)                                                    \
        WindowInfo& info = *static_cast<WindowInfo*>(glfwGetWindowUserPointer(window));  \
        info.event_callback_(std::move(incoming_event))
 
 namespace naive {
-
-  //   namespace Internal {
-  // 
-  //     void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-  //     {
-  //       if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-  //         naive::Application::application_should_close_ = true;
-  //         //glfwSetWindowShouldClose(window, GLFW_TRUE);
-  //       }
-  //     }
-  // 
-  //   }
 
   uint8_t Window_ImplWindows::s_instantiated_windows_count_ = 0;
 
@@ -60,6 +52,7 @@ namespace naive {
       info_.height_, info_.title_.c_str(), NULL, NULL);
 
     glfwMakeContextCurrent(window_instance_);
+
     int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     NAIVE_ASSERT(status, "Failed to initialize GLAD");
 
@@ -156,9 +149,25 @@ namespace naive {
 
     });
 
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    io.WantCaptureMouse = true;
+    io.WantCaptureKeyboard = true;
+
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForOpenGL(window_instance_, true);
+    ImGui_ImplOpenGL3_Init("#version 460");
+
   }
 
   void Window_ImplWindows::shutdown() {
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     glfwDestroyWindow(window_instance_);
 
@@ -168,6 +177,8 @@ namespace naive {
     }
 
   }
+
+  void* Window_ImplWindows::getNativeWindow() { return window_instance_; }
 
   void Window_ImplWindows::setVsyncEnabled(const bool& vsync) {
 
@@ -186,8 +197,21 @@ namespace naive {
 
   void Window_ImplWindows::onUpdate() {
 
-    glfwSwapBuffers(window_instance_);
     glfwPollEvents();
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+
+    static bool show = true;
+    ImGui::ShowDemoWindow(&show);
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+
+    glfwSwapBuffers(window_instance_);
 
   }
 
