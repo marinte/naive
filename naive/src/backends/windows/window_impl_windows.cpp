@@ -9,9 +9,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <Imgui/imgui.h>
-#include <backends/windows/imgui_impl_glfw.h>
-#include <backends/opengl/imgui_impl_opengl3.h>
+#include <imgui/imgui.h>
+
+#define IMGUI_IMPL_OPENGL_LOADER_GLAD
+#include <imgui/backends/imgui_impl_glfw.cpp>
+#include <imgui/backends/imgui_impl_opengl3.cpp>
 
 // Game Engine Architecture 3rd Edition - Page 1137
 
@@ -209,7 +211,6 @@ namespace naive {
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
 
     glfwSwapBuffers(window_instance_);
 
